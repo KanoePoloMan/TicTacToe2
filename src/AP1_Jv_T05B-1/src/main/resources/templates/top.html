@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Топ игроков</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: 200px;
+        }
+        .search-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        .search-container button:hover {
+            background-color: #367c39;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f9f9f9;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <h1>Топ игроков</h1>
+    <div class="search-container">
+        <input type="number" id="limitInput" placeholder="Введите число">
+        <button onclick="searchTopPlayers()">Поиск</button>
+    </div>
+
+    <table id="playersTable">
+        <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Соотношение побед</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Данные будут добавлены сюда динамически -->
+        </tbody>
+    </table>
+
+    <script>
+        function searchTopPlayers() {
+            const limit = document.getElementById('limitInput').value;
+
+            if (!limit || isNaN(limit) || limit <= 0) {
+                alert("Пожалуйста, введите корректное число.");
+                return;
+            }
+            const accessToken = localStorage.getItem("accessToken");
+            fetch('/game/multiplayer/getTopPlayers', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(limit)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#playersTable tbody');
+                tableBody.innerHTML = ''; // Очищаем таблицу перед добавлением новых данных
+
+                data.forEach(player => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${player.login}</td>
+                        <td>${player.ratio}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при получении данных:', error);
+                alert("Произошла ошибка при загрузке данных.");
+            });
+        }
+    </script>
+</body>
+</html>

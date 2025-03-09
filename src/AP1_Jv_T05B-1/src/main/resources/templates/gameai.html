@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Крестики-нолики</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #f0f0f0; /* Светлый фон */
+      transition: background-color 0.3s ease; /* Анимация смены цвета */
+      position: relative; /* Чтобы добавить позиционирование для переключателя */
+    }
+
+    .container {
+      background-color: #fff; /* Светлый фон */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+
+    #game-container {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #ccc; /* Светлая граница */
+      border-radius: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      cursor: pointer;
+      background-color: #eee; /* Светлый фон */
+      transition: background-color 0.3s ease;
+    }
+
+    .cell:hover {
+      background-color: #ddd;
+    }
+
+    #game-result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333; /* Темный текст */
+      transition: color 0.3s ease;
+    }
+
+    /* Стили для темной темы */
+    body.dark {
+      background-color: #333;
+    }
+
+    .container.dark {
+      background-color: #222;
+    }
+
+    .cell.dark {
+      border-color: #666;
+      background-color: #444;
+    }
+
+    .cell.dark:hover {
+      background-color: #555;
+    }
+
+    #game-result.dark {
+      color: #eee;
+    }
+
+    /* Кнопка смены темы */
+    #theme-switch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      -webkit-appearance: none; /* Скрыть стандартный вид переключателя */
+      appearance: none;
+      width: 50px;
+      height: 25px;
+      background-color: #ccc; /* Фон переключателя */
+      border-radius: 25px;
+      transition: background-color 0.3s ease;
+    }
+
+    #theme-switch::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 21px;
+      height: 21px;
+      background-color: #fff; /* Цвет "шарика" */
+      border-radius: 50%;
+      transition: left 0.3s ease;
+    }
+
+    #theme-switch.dark {
+      background-color: #666;
+    }
+
+    #theme-switch.dark::before {
+      left: 27px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Крестики-нолики</h1>
+    <div id="game-container"></div>
+    <div id="game-result"></div>
+    <div id="game-info"></div>
+  </div>
+
+  <label for="theme-switch">
+    <input type="checkbox" id="theme-switch">
+  </label>
+  <div id="UUID" th:data-my-variable="${pathUUID}"></div>
+  <script src="/scripts/gameaiscript.js"></script>
+</body>
+</html>

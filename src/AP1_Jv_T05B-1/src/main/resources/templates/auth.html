@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Login</h2>
+            <div id="error-message" class="alert alert-danger" style="display: none;">
+                Invalid username or password.
+            </div>
+            <div id="success-message" class="alert alert-success" style="display: none;">
+                You have been logged out.
+            </div>
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <a onclick="reg()" class="btn btn-secondary">Register</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script>
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Отправляем запрос на сервер для получения токена
+        fetch(localStorage.getItem("serverURL") + '/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
+            return response.json(); // Предполагаем, что сервер возвращает JSON с токеном
+        })
+        .then(data => {
+            // Сохраняем токен в localStorage
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('refreshToken', data.refreshToken);
+
+            // Показываем сообщение об успешном входе
+            document.getElementById('success-message').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+
+            localStorage.setItem("loadPage", "/menu");
+        })
+        .catch(error => {
+            // Показываем сообщение об ошибке
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('success-message').style.display = 'none';
+            console.error('Error:', error);
+        });
+    });
+    function reg() {
+        fetch(localStorage.getItem("serverURL") + '/reg')
+        .then(response => {
+            if(!response.ok) {
+                throw new Error('Ошибка загрузки данных');
+            }
+            return response.text(); // Получаем HTML как текст
+        })
+        .then(html => {
+            localStorage.setItem("updated", false);
+            localStorage.setItem("html", html);
+        }) 
+    }
+</script>
+</body>
+</html>

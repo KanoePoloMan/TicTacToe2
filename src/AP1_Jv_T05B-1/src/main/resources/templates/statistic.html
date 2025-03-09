@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список завершенных игр</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            cursor: pointer;
+        }
+        th:hover {
+            background-color: #ddd;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Список завершенных игр</h1>
+    <table id="gamesTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">UUID</th>
+                <th onclick="sortTable(1)">Игрок X</th>
+                <th onclick="sortTable(2)">Игрок O</th>
+                <th onclick="sortTable(3)">Статус игры</th>
+                <th onclick="sortTable(4)">Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Данные будут вставлены сюда через JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Функция для загрузки данных с сервера
+        const getEndedGamesURI = '/game/multiplayer/getEndedGames';
+        const getNicknameURI = '/game/multiplayer/getNameByUUID';
+
+        async function loadGames() {
+            try {
+                const accessToken = localStorage.getItem("accessToken");
+                const response = await fetch(getEndedGamesURI, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке данных');
+                }
+                const games = await response.json();
+                console.log(games);
+                await displayGames(games);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                document.querySelector('tbody').innerHTML = `<tr><td colspan="5" class="error">${error.message}</td></tr>`;
+            }
+        }
+
+        // Функция для отображения данных в таблице
+        async function displayGames(games) {
+            const tbody = document.querySelector('tbody');
+            tbody.innerHTML = ''; // Очищаем таблицу перед заполнением
+
+            for(const game of games) {
+                const row = document.createElement('tr');
+                console.log(game);
+
+                const nickX = await loadNickname(game.x);
+                const nickO = await loadNickname(game.o);
+
+                row.innerHTML = `
+                    <td>${game.uuid}</td>
+                    <td>${nickX}</td>
+                    <td>${nickO}</td>
+                    <td>${game.gameState}</td>
+                    <td>${new Date(game.date).toLocaleString()}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        // Функция для сортировки таблицы
+        function sortTable(columnIndex) {
+            const table = document.getElementById('gamesTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            rows.sort((a, b) => {
+                const aValue = a.cells[columnIndex].textContent;
+                const bValue = b.cells[columnIndex].textContent;
+
+                if (columnIndex === 4) { // Для сортировки по дате
+                    return new Date(aValue) - new Date(bValue);
+                }
+                return aValue.localeCompare(bValue);
+            });
+
+            // Очищаем и перезаполняем таблицу
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+        }
+        async function loadNickname(uuid) {
+            const accessToken = localStorage.getItem("accessToken");
+            let response = await fetch(getNicknameURI, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(uuid)
+            });
+            return await response.text();
+        }
+        // Загружаем данные при загрузке страницы
+        loadGames();
+    </script>
+</body>
+</html>

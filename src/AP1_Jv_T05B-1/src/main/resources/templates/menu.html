@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск Игры</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+        .header .nickname {
+            font-weight: bold;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            width: 300px; /* Фиксированная ширина для всех кнопок */
+        }
+
+         button:hover {
+            background-color: #367c39;
+        }
+        .top-button {
+            margin-top: 80px; /* Отступ для кнопки "Топ игроков" */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="nickname" th:text="${nickname}" onclick="statistic()"></button>
+    </div>
+
+    <div class="button-container">
+        <button onclick="findPlayer()">Найти Игру с Игроком</button>
+        <button onclick="createPlayer()">Создать Игру с Игроком</button>
+        <button onclick="availableGames()">Доступные Игры</button>
+        <button onclick="findComputer()">Найти Игру с Компьютером</button>
+        <button class="top-button" onclick="toTopPage()">Топ игроков</button>
+    </div>
+
+    <script th:inline="javascript">
+        function findPlayer() {
+           /*<![CDATA[*/
+             localStorage.setItem("loadPage", "/game/multiplayer/newGame");
+            // Здесь можно добавить код для реального поиска игрока
+           /*]]>*/
+        }
+
+        function findComputer() {
+            /*<![CDATA[*/
+            localStorage.setItem("loadPage", "/game/ai/newGame");
+            // Здесь можно добавить код для начала игры с компьютером
+            /*]]>*/
+        }
+        
+        function createPlayer() {
+            /*<![CDATA[*/
+            localStorage.setItem("loadPage", "/game/multiplayer/createGame");
+            // Здесь можно добавить код для создания игры с компьютером
+            /*]]>*/
+        }
+        function availableGames() {
+            /*<![CDATA[*/
+            localStorage.setItem("loadPage", "/game/multiplayer/availableGames");
+            // Здесь можно добавить код для создания игры с компьютером
+            /*]]>*/
+        }
+        function statistic() {
+            localStorage.setItem("loadPage", "/statistic");
+        }
+        function toTopPage() {
+            localStorage.setItem("loadPage", "/top");
+        }
+    </script>
+</body>
+</html>

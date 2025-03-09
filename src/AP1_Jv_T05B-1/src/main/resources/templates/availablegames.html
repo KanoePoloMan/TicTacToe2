@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Доступные игры</title>
+<style>
+  #scrollableList {
+    width: 200px;
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 5px;
+  }
+
+  .listItemButton {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    text-align: left;
+    border-radius: 4px;
+  }
+
+  .listItemButton:hover {
+    background-color: #e0e0e0;
+  }
+  #backButton {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  #backButton:hover {
+    background-color: #367C39;
+  }
+</style>
+</head>
+<body>
+
+<h1>Доступные игры</h1>
+
+<div id="scrollableList">
+  <!-- Кнопки будут добавлены сюда скриптом -->
+</div>
+
+<button id="backButton">Вернуться в Меню</button>
+
+<script src="/scripts/availablegames.js"></script>
+
+</body>
+</html>
